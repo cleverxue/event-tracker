@@ -1,5 +1,5 @@
 # 多阶段构建（规格第八章）：
-#   阶段 1 node:20 构建前端 → 阶段 2 python:3.11-slim 装后端依赖
+#   阶段 1 node:20 构建前端 → 阶段 2 python:3.13-slim 装后端依赖
 #   → 复制前端 dist 到 /app/static → uvicorn main:app --host 0.0.0.0 --port 8000
 FROM node:20 AS frontend-build
 
@@ -11,7 +11,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # ------------------------------------------------------------------ #
-FROM python:3.11-slim AS runtime
+FROM python:3.13-slim AS runtime
 
 WORKDIR /app
 
