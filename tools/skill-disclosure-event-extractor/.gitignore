@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+.ipynb_checkpoints/
+
+# pipeline artifacts — never commit fetched filings or extracted event tables
+cache/
+reports/
+*.pdf
+events.csv
+events.parquet
+backtest*.json
+manifest.json
+*.local.*

@@ -1,0 +1,11 @@
+# 构建上下文瘦身：node_modules/dist 由镜像内构建产生，data/cache/logs 运行时挂载
+frontend/node_modules
+frontend/dist
+.git
+logs
+data
+cache
+**/__pycache__
+*.pyc
+*.tmp.parquet
+.env

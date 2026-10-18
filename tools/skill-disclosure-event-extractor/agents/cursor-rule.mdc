@@ -1,0 +1,39 @@
+---
+description: Use the Disclosure Event Extractor skill to turn A-share announcement text (cninfo / SSE / SZSE) into a structured, source-traceable event table.
+alwaysApply: false
+---
+
+# Disclosure Event Extractor Skill
+
+When the user asks to scan A-share announcements, find 监管问询函/关注函、诉讼/对外担保、
+重组/收购、停牌/控制权变更、增减持/质押/业绩预告 events, build an event table, or run an
+event-driven backtest on disclosures, use the local skill package.
+
+Preferred local project path:
+
+```text
+.cursor/skills/disclosure-event-extractor
+```
+
+## How to use
+
+1. Read `SKILL.md` — the workflow, the Tier A / Tier B split, and the boundary with
+   `skill-event-risk-alert` (that skill consumes Pandadata's already-structured fields and
+   alerts; this one reads raw announcement text and structures it).
+2. Read `references/event-taxonomy.md` before classifying — classification is **title-driven**
+   (body text yields heavy false positives) and every direction label is calibrated by the
+   measured evidence in `references/l3-evidence.md`.
+3. Run the pipeline:
+   ```bash
+   python scripts/fetch_announcements.py --symbols 000001.SZ --start 20260101 --end 20260630 --out cache/
+   # or discover Tier A events market-wide by keyword:
+   python scripts/fetch_announcements.py --keywords 关注函 问询函 诉讼 --start 20260101 --end 20260630 --out cache/ [--no-text]
+   python scripts/extract_events.py --cache cache/ --out events.csv [--llm]
+   python scripts/validate_events.py events.csv
+   ```
+4. Treat `direction` per the validated signals table in `SKILL.md`: **利空 (especially
+   监管问询) carries real forward signal; 利好 is largely priced in; 控制权变更 is a
+   positive-skew lottery, not a long signal.**
+5. Do not invent Pandadata methods, announcement fields, or event types outside the taxonomy.
+   Never output an event row without `source_url` + `disclosure_id`.
+6. Output is data, not advice — every report ends with the disclaimer in `SKILL.md`.

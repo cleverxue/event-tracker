@@ -1,0 +1,34 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - name: unit tests (incl. thousands-separator amount regressions)
+        run: python -B -m unittest discover -s tests -v
+
+  publish-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: author attribution must be a real GitHub username
+        run: python .github/check_attribution.py
+      - name: no personal email address in tracked content
+        run: |
+          if grep -rnE "[A-Za-z0-9._%+-]+@(gmail|qq|163|126|outlook|hotmail)\.com" . \
+               --exclude-dir=.git --exclude-dir=.github; then
+            echo "::error::a personal email address would be published; use a GitHub username instead."
+            exit 1
+          fi

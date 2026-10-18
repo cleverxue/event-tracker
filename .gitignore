@@ -1,0 +1,23 @@
+# ===== 红线：密钥与本地配置 =====
+.env
+
+# ===== 运行时数据与状态（新克隆按 docs/github_plan.md 第十节重建）=====
+data/
+cache/
+logs/
+
+# ===== Python =====
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# ===== 前端 =====
+# frontend/dist 是构建中间产物；服务实际读取 static/（已入库，Docker 内也会重建）
+frontend/node_modules/
+frontend/dist/
+
+# ===== 系统与临时 =====
+Thumbs.db
+.DS_Store
+*.tmp
+*.tmp.parquet

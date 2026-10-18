@@ -1,0 +1,12 @@
+# 后端运行时依赖（版本锁定为本机实测通过版本）
+# 规格第十章：不引入文档外依赖；新增依赖需在交付说明中说明理由
+APScheduler==3.11.3
+MyTT==2.9.3
+fastapi==0.141.1
+mootdx==0.11.7
+numpy==2.5.3
+pandas==3.0.5
+pyarrow==25.0.1
+requests==2.34.2
+tzlocal==5.4.4
+uvicorn==0.52.4

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Disclosure Event Extractor"
+  short_description: "A-share announcement text to a traceable structured event table"
+  default_prompt: "Use $disclosure-event-extractor to pull A-share announcements and extract them into a structured, source-traceable event table."
