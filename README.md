@@ -57,7 +57,7 @@ event-tracker/
 ├── m2_verify.py                # M2 自动验收脚本
 ├── m4_verify.py                # M4 自动验收脚本（含限量实跑）
 ├── requirements.txt            # 后端依赖（版本锁定为本机实测通过版本）
-├── Dockerfile                  # 多阶段构建：node:20 前端 → python:3.11-slim 后端
+├── Dockerfile                  # 多阶段构建：node:20 前端 → python:3.13-slim 后端
 ├── docker-compose.yml          # 单容器部署（规格第八章口径）
 ├── scripts/
 │   ├── refresh_trade_calendar.py
@@ -78,7 +78,8 @@ event-tracker/
 
 ## 快速开始（M1，本地开发）
 
-环境：Python 3.11+（开发用 3.13，代码按 3.11 兼容编写；Docker 内为 3.11-slim）。
+环境：Python 3.13（本机 venv 3.13.12 实测；CI/Docker 均对齐 3.13；依赖锁定版本
+numpy 2.5.3 起要求 >=3.12，**勿配 3.11**——2026-10-18 CI 首跑红叉实锤无 cp311 wheel）。
 
 ```bash
 # 1. 安装依赖
@@ -239,7 +240,7 @@ JSON，不会被前端页面吞掉。
 # 1. 配置密钥（复制示例后填写；飞书不配则只落库不推送）
 cp .env.example .env
 
-# 2. 构建并启动（多阶段：node:20 构建前端 → python:3.11-slim 运行）
+# 2. 构建并启动（多阶段：node:20 构建前端 → python:3.13-slim 运行）
 docker compose up -d --build
 
 # 3. 查看日志

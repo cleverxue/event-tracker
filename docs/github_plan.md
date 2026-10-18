@@ -216,7 +216,7 @@ jobs:
           submodules: recursive      # tools/ 是运行时依赖，必须带上
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"     # 与 Dockerfile python:3.11-slim 对齐
+          python-version: "3.13"     # 与本机实测环境对齐；numpy 2.5.3 requires-python>=3.12，勿用 3.11
       - run: pip install -r requirements.txt
       - run: python tests/test_indicators.py
       - run: python tests/test_tracker.py
@@ -234,7 +234,7 @@ jobs:
 
 ## 九、Docker / 镜像（可选，不过度工程化）
 
-- 现有 Dockerfile 多阶段构建（node:20 构建前端 → python:3.11-slim 运行），  
+- 现有 Dockerfile 多阶段构建（node:20 构建前端 → python:3.13-slim 运行），  
   入库即可复现；**本机无 Docker 未实测**的现状不变，CI 也不加 docker build  
   （慢且没必要）。
 - 若哪天想自动推镜像：加一个 workflow 用 `docker/build-push-action` 推  
@@ -302,12 +302,17 @@ uvicorn main:app --host 127.0.0.1 --port 8000
 
 ---
 
-## 十三、待老哥拍板的三件事
+## 十三、执行记录（2026-10-18 已落地）
 
-1. **仓库名与归属**：`event-tracker` 可以吗？用哪个 GitHub 账号建？
-2. **tools/ 打法**：submodule（推荐，保留上游）还是内化复制（省心）？
-3. **CI 要不要**：想要 push 后自动跑离线回归就建 `.github/workflows/ci.yml`  
-   （第八节模板直接用）；想极简就先不建，本地跑测试。
+老哥拍板与执行结果：
 
-确认后我按第六节清单一次性执行（git init → .gitignore → 基线提交 →  
-submodule → 推库），CI 文件按第 3 项决定是否落。
+1. **仓库名与归属**：`event-tracker`，账号 **`cleverxue`**（commit 邮箱 `cleverxue0898@sina.com`）→ 已建 **Private** 仓库并推送成功
+2. **tools/ 打法**：**内化复制**——删除子仓库 `.git`（保留上游 quantskills LICENSE 归属声明），344K 文件直接入库，clone 即用、无 `--recursive` 负担
+3. **CI**：**要**——`.github/workflows/ci.yml` 已入库（内化版，无 submodule 行），push 到 main 自动跑两个离线测试
+
+落地状态（2026-10-18 15:40 核验）：
+
+- 基线提交 `d538ba4`（tag `v1.0.0`）+ CI 提交 `3b4f601`；本地 main 与 origin/main 完全同步（无 ahead/behind）
+- push 由老哥本机终端执行：沙箱代理只放行 `api.github.com`，`github.com` 主站不可达（502/直连 000）；remote URL 采用 userinfo 形式 `https://cleverxue@github.com/cleverxue/event-tracker.git`，绕开老哥全局 `.gitconfig` 里的 ghproxy insteadOf 加速规则（该规则利 clone、但对只读镜像 push 必败）
+- 推送过程中 GCM 浏览器授权一次成功，凭证已缓存，后续推送不再弹窗
+- 待观察：GitHub Actions 首跑（push 到 main 应自动触发 ci workflow，预期绿勾）

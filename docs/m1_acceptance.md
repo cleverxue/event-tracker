@@ -67,6 +67,8 @@
    `datetime64[ns]`（零点）存储，语义为 date。
 5. **Python 版本**：开发用 managed 3.13 venv，代码按 3.11 兼容编写（无 3.12+ 语法），
    Docker 镜像为 python:3.11-slim，运行时版本满足规格。
+   （2026-10-18 修正：依赖锁定版 numpy 2.5.3 requires-python>=3.12、无 cp311 wheel，
+   Docker/CI 已改 python:3.13-slim / 3.13；"代码按 3.11 兼容"指语法兼容，仍有效）
 6. **新增依赖 pdfplumber**：规格点名使用的 skill 脚本本身依赖它（其 requirements.txt
    亦列明），非本系统额外引入。
 

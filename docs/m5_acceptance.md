@@ -10,7 +10,7 @@
 | 构建产物 | `static/`（源：`frontend/dist/`） | index.html + assets（JS 177KB / gzip 58KB，CSS 4.4KB） |
 | 后端适配 | `main.py` | SPA 深链回退（404 异常处理）；`/api/*` 404 保持 JSON |
 | 依赖清单 | `requirements.txt` | 10 个运行时依赖，版本锁定本机实测值 |
-| 容器部署 | `Dockerfile` / `docker-compose.yml` / `.dockerignore` | 多阶段构建（node:20 → python:3.11-slim），规格第八章口径 |
+| 容器部署 | `Dockerfile` / `docker-compose.yml` / `.dockerignore` | 多阶段构建（node:20 → python:3.13-slim），规格第八章口径 |
 
 ## 规格符合性（第七章）
 
@@ -50,7 +50,7 @@
 
 ## Docker 部署说明（规格第八章）
 
-- 多阶段：`node:20` 构建前端 → `python:3.11-slim` 装 `requirements.txt` →
+- 多阶段：`node:20` 构建前端 → `python:3.13-slim` 装 `requirements.txt` →
   dist 复制到 `/app/static` → `uvicorn main:app --host 0.0.0.0 --port 8000`。
 - compose：`127.0.0.1:8000:8000`、挂载 `./data` 与 `./cache`、`env_file: .env`、
   `OLLAMA_HOST=http://host.docker.internal:11434`（extra_hosts host-gateway）、
@@ -59,7 +59,10 @@
   日志 `docker compose logs -f app`。
 - **本机无 Docker，镜像未实际构建验证**；前端构建产物与后端服务已在本机
   完整验证（浏览器三页面实测）。依赖版本（pandas 3.0.5 / numpy 2.5.3 等）
-  均有 cp311 wheel，python:3.11-slim 可装。
+  在本机 venv（Python 3.13.12）实测可装。
+  （2026-10-18 修正：本条原记"均有 cp311 wheel，python:3.11-slim 可装"为**误**——
+  GitHub CI 首跑红叉实锤：numpy 2.5.3 requires-python>=3.12、cp311 wheel 数=0。
+  Dockerfile 与 CI 均已改为 python:3.13-slim / 3.13，对齐本机实测环境）
 
 ## 新增依赖说明（规格第十章要求）
 
